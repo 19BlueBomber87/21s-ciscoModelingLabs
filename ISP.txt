@@ -1,0 +1,13 @@
+![ISP]
+ip route 0.0.0.0 0.0.0.0 10.44.44.1
+ip route 0.0.0.0 0.0.0.0 10.55.55.1 5
+
+![HSRP1]
+ip route 0.0.0.0 0.0.0.0 10.44.44.2
+router ospf 50
+default-information originate metric 5
+![HSRP2]
+ip route 0.0.0.0 0.0.0.0 10.55.55.2
+router ospf 50
+default-information originate
+

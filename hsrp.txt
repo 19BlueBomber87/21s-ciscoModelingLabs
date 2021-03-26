@@ -1,0 +1,70 @@
+![ISP]
+ip routing
+hostname ISP
+line console 0
+logging sync
+interface loopback 0
+ip address 209.165.16.17 255.255.255.0
+no shutdown
+interface gigabitEthernet 0/0
+no switchport
+ip address 10.44.44.2 255.255.255.252
+no shutdown
+interface gigabitEthernet 0/1
+no switchport
+ip address 10.55.55.2 255.255.255.252
+no shutdown
+
+![HSRP1]
+hostname HSRP1
+Line console 0
+Logging sync
+router ospf 50
+router-id 9.9.9.9
+interface gigabitEthernet 0/0
+ip address 10.10.10.5 255.255.255.224
+no shutdown
+ip ospf 50 area 0
+standby 30 ip 10.10.10.30
+standby version 2
+standby 20 name HSRP
+standby 20 priority 90
+interface gigabitEthernet 0/2
+ip address 10.44.44.1 255.255.255.252
+no shutdown
+
+![HSRP2]
+hostname HSRP2
+Line console 0
+Logging sync
+router ospf 50
+router-id 10.10.10.10
+interface gigabitEthernet 0/0
+ip address 10.10.10.6 255.255.255.224
+no shutdown
+ip ospf 50 area 0
+standby 30 ip 10.10.10.30
+standby version 2
+standby 20 name HSRP
+standby 20 priority 110
+interface gigabitEthernet 0/2
+ip address 10.55.55.1 255.255.255.252
+no shutdown
+
+![hswitch1]
+hostname hswitch1
+Line console 0
+Logging sync
+interface gigabitEthernet 0/1
+switchport trunk encapsulation dot1q
+switchport mode trunk
+
+
+![hswitc2]
+hostname hswitch2
+Line console 0
+Logging synch
+interface gigabitEthernet 0/1
+switchport trunk encapsulation dot1q
+switchport mode trunk
+

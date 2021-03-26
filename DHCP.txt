@@ -1,0 +1,62 @@
+!DHCP
+hostname SnoopSwitch
+line console 0
+logging sync
+ip dhcp snooping
+ip dhcp snooping vlan 1
+no ip dhcp snooping information option
+errdisable recovery cause dhcp-rate-limit
+errdisable recovery interval 900
+ip arp inspection vlan 1
+errdisable recovery cause arp-inspection
+interface range gigabitEthernet 0/0-1
+switchport trunk encapsulation dot1q
+switchport mode trunk
+ip dhcp snooping trust
+ip arp inspection trust
+interface range gigabitEthernet 0/2-3, gi 1/0-3, gi 2/0-3, gi 3/0-3
+ip dhcp snooping limit rate 8
+ip arp inspection limit rate 8
+ip arp inspection limit rate 8 burst interval 4
+ip arp inspection validate src-mac dst-mac ip
+no ip arp inspection validate src-mac dst-mac ip
+
+![Branch1]
+!Pool1
+interface gigabitEthernet 0/1
+ip address 172.16.1.1 255.255.255.0
+no shutdown
+ip ospf 50 area 0
+ip dhcp excluded-address 172.16.1.1 172.16.1.5
+ip dhcp pool ONE
+domain-name example.com
+network 172.16.1.0 255.255.255.0
+default-router 172.16.1.1
+dns-server 8.8.8.8
+lease 7
+!Pool2
+ip dhcp excluded-address 192.168.254.1 192.168.254.5
+ip dhcp pool Two
+domain-name example.com
+network 192.168.254.0 255.255.255.0
+default-router 192.168.254.1
+dns-server 8.8.8.8
+lease 7
+ip route 192.168.254.0 255.255.255.0 172.16.1.2
+
+
+![ExpansionProject1]
+hostname Expansion1
+line console 0
+logging sync
+router ospf 50
+router-id 0.0.0.1
+interface gigabitEthernet 0/0
+ip address 172.16.1.2 255.255.255.0
+no shutdown
+ip opf 50 area 0
+interface gigabitEthernet 0/1
+ip address 192.168.254.1 255.255.255.0
+ip helper-address 172.16.1.1
+ip ospf 50 area 0
+no shutdown

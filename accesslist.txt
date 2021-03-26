@@ -1,0 +1,33 @@
+![Secure-Zone]
+router ospf 50
+router-id 0.0.0.2
+interface gigabitEthernet 0/1
+ip address 10.77.77.1 255.255.255.248
+no shutdown
+ip ospf 50 area 0
+access-list 7 deny host 192.168.5.100 
+access-list 7 permit any
+interface gigabitEthernet 0/0
+ip access-group 7 in
+
+![Branch1]
+ip access-list extended BlockSubNetList
+deny ip 172.16.1.0 0.0.0.255 10.77.77.0 0.0.0.15
+permit ip any any
+interface gigabitEthernet 0/0
+ip access-group BlockSubNetList out   
+
+![Central]
+ip access-list extended BlockTelnetList
+deny tcp 192.168.0.0 0.0.255.255 10.77.77.0 0.0.0.15 eq 23
+permit ip any any
+interface gigabitEthernet 0/0
+ip access-group BlockTelnetList out   
+
+![Expansion1]
+ip access-list extended BlockSSHList
+deny tcp 192.168.254.0 0.0.0.255 10.77.77.0 0.0.0.15 eq any
+permit ip any any
+interface gigabitEthernet 0/0
+ip access-group BlockSSHList out   
+

@@ -1,0 +1,83 @@
+!LAN2
+
+![Area51]
+hostname Area51NET
+line console 0
+logging sync
+interface gigabitEthernet 0/2
+no shutdown
+interface gigabitEthernet 0/2.10
+encapsulation dot1Q 10
+ip address 192.168.10.1 255.255.255.0
+interface gigabitEthernet 0/2.20
+encapsulation Dot1Q 20
+ip address 192.168.20.1 255.255.255.0
+interface gigabitEthernet 0/1
+ip address 10.97.97.1 255.255.255.240
+no shutdown
+ip route 192.168.77.0 255.255.255.240 10.97.97.2
+ip route 192.168.7.0 255.255.255.240 10.97.97.2
+ip nat inside source static 192.168.10.100 10.10.10.11
+ip nat inside source static 192.168.20.100 10.10.10.12
+interface gigabitEthernet 0/0
+ip nat outside
+no shutdown
+interface gigabitEthernet 0/2.10
+ip nat inside
+interface gigabitEthernet 0/2.20
+ip nat inside
+
+![vipswitch1]
+hostname vipswitch1
+line console 0
+logging sync
+interface gigabitEthernet 0/0
+switchport trunk encapsulation dot1q
+switchport mode trunk
+interface gigabitEthernet 0/1
+switchport mode access
+switchport access vlan 10
+interface gigabitEthernet 0/2
+switchport mode access
+switchport access vlan 20
+
+![Vault51]
+hostname VAULT51
+line console 0
+logging sync
+password Area51
+interface gigabitEthernet 0/1
+no shutdown
+interface gigabitEthernet 0/1.77
+encapsulation Dot1Q 77
+ip address 192.168.77.1 255.255.255.240
+interface gigabitEthernet 0/1.7
+encapsulation Dot1Q 7
+ip address 192.168.7.1 255.255.255.240
+interface gigabitEthernet 0/0
+ip address 10.97.97.2 255.255.255.240
+no shutdown
+ip route 192.168.10.0 255.255.255.0 10.97.97.1
+ip route 192.168.20.0 255.255.255.0 10.97.97.1
+ip nat pool ExecutiveBranch 10.97.97.16 10.97.97.30 netmask 255.255.255.240 
+ip nat inside source list 7 pool ExecutiveBranch overload
+access-list 7 permit 192.168.77.0 0.0.0.15
+access-list 7 permit 192.168.7.0 0.0.0.15
+
+
+![vipswitch2]
+hostname vipswitch2
+line console 0
+logging sync
+interface gigabitEthernet 0/0
+switchport trunk encapsulation dot1q
+switchport mode trunk
+interface gigabitEthernet 0/1
+switchport mode access
+switchport access vlan 77
+interface gigabitEthernet 0/2
+switchport mode access
+switchport access vlan 7
+
+
+
